@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>[csapp] lab1 | breakspear的精神家园</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://breakspears.github.io/favicon.ico?v=1678675769605">
+<link rel="stylesheet" href="https://breakspears.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="1.1 bitXor
+/* 
+ * bitXor - x^y using only ~ and &amp; 
+ *   Example: bitXor(4, 5) = 1
+ *   Legal ops: ~ &amp;
+ *   Max o..." />
+    <meta name="keywords" content="csapp" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://breakspears.github.io">
+        <img src="https://breakspears.github.io/images/avatar.png?v=1678675769605" class="site-logo">
+        <h1 class="site-title">breakspear的精神家园</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      沉迷学习、日渐消瘦
+    </div>
+    <div class="site-footer">
+       | <a class="rss" href="https://breakspears.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">[csapp] lab1</h2>
+            <div class="post-date">2023-03-13</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="11-bitxor">1.1 bitXor</h2>
+<pre><code class="language-c">/* 
+ * bitXor - x^y using only ~ and &amp; 
+ *   Example: bitXor(4, 5) = 1
+ *   Legal ops: ~ &amp;
+ *   Max ops: 14
+ *   Rating: 1
+ */
+int bitXor(int x, int y) {
+  return ~(~x&amp;~y)&amp;~(x&amp;y);
+}
+</code></pre>
+<p>思路<br>
+异或运算的逻辑表达式是<br>
+<img src="https://img-blog.csdnimg.cn/73e692d2cc034ebf8bbe63f999160869.png" alt="在这里插入图片描述" loading="lazy"><br>
+对应的是</p>
+<pre><code class="language-c">return (x&amp;~y) | (~x &amp; y);
+</code></pre>
+<p>然而本题不允许使用 “|” ，故需要将公式变形，得到上面结果<br>
+<img src="https://img-blog.csdnimg.cn/20d76e5ee998456895f7d6119caa707b.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5YiYX-a1qQ==,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"></p>
+<h2 id="12-tmin">1.2 tmin</h2>
+<pre><code class="language-c">/* 
+ * tmin - return minimum two's complement integer 
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 4
+ *   Rating: 1
+ */
+int tmin(void) {
+  return 1&lt;&lt;31;
+}
+</code></pre>
+<h2 id="13-istmax">1.3 isTmax</h2>
+<pre><code class="language-c">/*
+ * isTmax - returns 1 if x is the maximum, two's complement number,
+ *     and 0 otherwise 
+ *   Legal ops: ! ~ &amp; ^ | +
+ *   Max ops: 10
+ *   Rating: 1
+ */
+int isTmax(int x) {
+  return !((~(x+1)^x))&amp;!!(x+1);
+}
+</code></pre>
+<p>思路<br>
+用四位来表示整数，可以发现：最大的数<strong>0111</strong>加<strong>1</strong>取反之后还是<strong>0111</strong>。注意：<strong>1111</strong> 同样满足，故还要排除这种情况。</p>
+<h2 id="14-alloddbits">1.4 allOddBits</h2>
+<pre><code class="language-c">/* 
+ * allOddBits - return 1 if all odd-numbered bits in word set to 1
+ *   where bits are numbered from 0 (least significant) to 31 (most significant)
+ *   Examples allOddBits(0xFFFFFFFD) = 0, allOddBits(0xAAAAAAAA) = 1
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 12
+ *   Rating: 2
+ */
+int allOddBits(int x) {
+    int a=0xAA&lt;&lt;8;
+    int c=a|0xAA;
+    int d=c&lt;&lt;16|c;
+    return !((x&amp;d)^(d));
+}
+</code></pre>
+<p>思路<br>
+本题的题意是x如果满足：下标为<strong>奇数</strong>的位上全部为<strong>1</strong>（注意是从0开始数的）。所以，我们可以用<strong>0xAAAAAAAA</strong>来提取奇数位上的数，然后在和<strong>0xAAAAAAAA</strong>比较看是否相同。</p>
+<h2 id="15-negate">1.5 negate</h2>
+<pre><code class="language-c">/* 
+ * negate - return -x 
+ *   Example: negate(1) = -1.
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 5
+ *   Rating: 2
+ */
+int negate(int x) {
+  return ~x+1 ;
+}
+</code></pre>
+<p>思路<br>
+<strong>A+~A=-1</strong>, <strong>A+-A=0</strong>。 由两式可以推出：<strong>-A = ~A+1</strong>, 这个公式比较重要，在下面的实验会重复用到。</p>
+<h2 id="16-isasciidigit">1.6 isAsciiDigit</h2>
+<pre><code class="language-c">/* 
+ * isAsciiDigit - return 1 if 0x30 &lt;= x &lt;= 0x39 (ASCII codes for characters '0' to '9')
+ *   Example: isAsciiDigit(0x35) = 1.
+ *            isAsciiDigit(0x3a) = 0.
+ *            isAsciiDigit(0x05) = 0.
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 15
+ *   Rating: 3
+ */
+int isAsciiDigit(int x) {
+    int a=!(x &gt;&gt; 4 ^0x3);
+    int b=x&amp;0xF;
+    int c=~0xA+1;
+    int e=0x80&lt;&lt;4;
+    int d=!!((b+c)&amp;(e));
+    return  a&amp;d ;
+}
+</code></pre>
+<p>思路<br>
+观察 <strong>'0'</strong> - <strong>'9'</strong> 二进制的低<strong>8</strong>位：<br>
+<strong>0</strong> : <strong>0011 0000</strong><br>
+<strong>9</strong> : <strong>0011 1001</strong><br>
+可以发现：在两者之间的数满足两个条件：</p>
+<ul>
+<li>1.前面的<strong>4</strong>位 ： <strong>0011</strong></li>
+<li>2.后面的<strong>4</strong>位 ： 在<strong>0~9</strong>之间</li>
+</ul>
+<p>对于第二个条件用后四位<strong>减去10</strong>，如果结果**&lt; 0**，则证明条件<strong>2</strong>成立。</p>
+<h2 id="17-conditional">1.7 conditional</h2>
+<pre><code class="language-c">/* 
+ * conditional - same as x ? y : z 
+ *   Example: conditional(2,4,5) = 4
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 16
+ *   Rating: 3
+ */
+int conditional(int x, int y, int z) {
+  int a=!!(x^0x0); //a=0 if x=0 else a =1
+  int b=~a+1;
+  int c=~(y&amp;~b)+1;
+  int d=~(z&amp;b)+1;
+  return y+z+c+d;
+}
+</code></pre>
+<p>思路<br>
+先判断x是否为0，如果为0让x=0xffffffff.</p>
+<h2 id="18-islessorequal">1.8 isLessOrEqual</h2>
+<pre><code class="language-c">/* 
+ * isLessOrEqual - if x &lt;= y  then return 1, else return 0 
+ *   Example: isLessOrEqual(4,5) = 1.
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 24
+ *   Rating: 3
+ */
+int isLessOrEqual(int x, int y) {
+  int a=x&gt;&gt;31&amp;0x1;
+  int b=y&gt;&gt;31&amp;0x1;
+  int c1=(a&amp;~b);  
+  int c2=(~a&amp;b);
+  int e=y+(~x+1);  
+  int flag=e&gt;&gt;31; 
+  return c1 |(!c2&amp;!flag);
+}
+</code></pre>
+<p>思路<br>
+要考虑到溢出的情况，只有当<strong>两数的符号不同</strong>的情况下才会溢出。而且由于是lessOr<strong>Equal</strong>,两者相等的情况也要考虑到，所以用<strong>y-x</strong>比较方便</p>
+<h2 id="19-logicalneg">1.9 logicalNeg</h2>
+<pre><code class="language-c">/* 
+ * logicalNeg - implement the ! operator, using all of 
+ *              the legal operators except !
+ *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1
+ *   Legal ops: ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 12
+ *   Rating: 4 
+ */
+int logicalNeg(int x) {
+  return ((x | (~x +1)) &gt;&gt; 31) + 1;
+}
+</code></pre>
+<p>思路<br>
+<strong>0</strong>相比与其他的数有一个特点：<strong>取反之后符号位的数与之前的不同</strong>。</p>
+<h2 id="110-howmanybits">1.10 howManyBits</h2>
+<pre><code class="language-c">/* howManyBits - return the minimum number of bits required to represent x in
+ *             two's complement
+ *  Examples: howManyBits(12) = 5
+ *            howManyBits(298) = 10
+ *            howManyBits(-5) = 4
+ *            howManyBits(0)  = 1
+ *            howManyBits(-1) = 1
+ *            howManyBits(0x80000000) = 32
+ *  Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *  Max ops: 90
+ *  Rating: 4
+ */
+int howManyBits(int x) {
+  int flag = x &gt;&gt; 31;
+  x = (~x &amp; flag) | (x &amp; ~flag); 
+  int b16 = !!(x&gt;&gt;16)&lt;&lt;4;
+  x&gt;&gt;=b16;
+  int b8 = !!(x&gt;&gt;8)&lt;&lt;3;
+  x&gt;&gt;=b8;
+  int b4 = !!(x&gt;&gt;4)&lt;&lt;2;
+  x&gt;&gt;=b4;
+  int b2 = !!(x&gt;&gt;2)&lt;&lt;1;
+  x&gt;&gt;=b2;
+  int b1 = !!(x&gt;&gt;1);
+  x&gt;&gt;=b1;
+  int b0 = x;
+  return b16+b8+b4+b2+b1+b0+1;
+}
+</code></pre>
+<p>思路<br>
+对于正数 : 返回<strong>n+1</strong>(n为1的最高位）<br>
+对于负数 : 取反后，同正数做法<br>
+利用二分的思路找最高位</p>
+<h2 id="111-floatscale2">1.11 floatScale2</h2>
+<p>下面的几个实验都是关于浮点数的，关键就是这张图<br>
+<img src="https://img-blog.csdnimg.cn/e1cea54c28054f888795cf5f3ed4d02c.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA5YiYX-a1qQ==,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述" loading="lazy"></p>
+<pre><code class="language-c">/* 
+ * floatScale2 - Return bit-level equivalent of expression 2*f for
+ *   floating point argument f.
+ *   Both the argument and result are passed as unsigned int's, but
+ *   they are to be interpreted as the bit-level representation of
+ *   single-precision floating point values.
+ *   When argument is NaN, return argument
+ *   Legal ops: Any integer/unsigned operations incl. ||, &amp;&amp;. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+unsigned floatScale2(unsigned uf) {
+  unsigned sign = uf &gt;&gt; 31;
+  unsigned exp = (uf &amp; 0x7f800000) &gt;&gt; 23;
+  unsigned frac = (uf &amp; 0x7fffff);
+  if (exp == 0xff) {
+    return uf;
+  } else if (exp == 0) {
+    frac &lt;&lt;= 1;
+    return (sign &lt;&lt; 31) | (exp &lt;&lt; 23) | frac;
+  } else {
+    exp++;
+    return (sign &lt;&lt; 31) | (exp &lt;&lt; 23) | frac;
+  }
+}
+</code></pre>
+<p>思路<br>
+<strong>exp == 255</strong>， 返回 <strong>uf</strong>自身<br>
+<strong>exp == 0</strong>，属于<strong>非规格化浮点数</strong><br>
+其他，<strong>exp++</strong></p>
+<h2 id="112">1.12</h2>
+<pre><code class="language-c">/* 
+ * floatFloat2Int - Return bit-level equivalent of expression (int) f
+ *   for floating point argument f.
+ *   Argument is passed as unsigned int, but
+ *   it is to be interpreted as the bit-level representation of a
+ *   single-precision floating point value.
+ *   Anything out of range (including NaN and infinity) should return
+ *   0x80000000u.
+ *   Legal ops: Any integer/unsigned operations incl. ||, &amp;&amp;. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+int floatFloat2Int(unsigned uf) {
+  unsigned exp = (0x7f800000 &amp; uf) &gt;&gt; 23;
+  unsigned sign = uf &amp; (0x1 &lt;&lt; 31);
+  unsigned frac = uf &amp; (0x7fffff);
+  int E = exp - 127;
+  if (E &lt; 0) return 0;
+  else if (E &gt;= 31) {
+    return  0x80000000u;
+  } else {
+    frac = frac | (1 &lt;&lt; 23);
+    if (E &gt; 23) {
+      frac &lt;&lt;= (E - 23);
+    } else{
+      frac &gt;&gt;= (23 - E);
+    }
+  }
+  if (sign) {
+    return -frac;
+  } else {
+    return frac;
+  }
+}
+</code></pre>
+<p>思路<br>
+将浮点数转化为<strong>int</strong><br>
+如果E超出正数所能表示的范围（即<strong>E&gt;=31</strong> 或 <strong>E &lt; 0</strong>), 返回<strong>0x80000000u</strong> 或 <strong>0</strong>，<br>
+然后处理在根据E的大小，进行位移处理。</p>
+<h2 id="113">1.13</h2>
+<pre><code class="language-c">/* 
+ * floatPower2 - Return bit-level equivalent of the expression 2.0^x
+ *   (2.0 raised to the power x) for any 32-bit integer x.
+ *
+ *   The unsigned value that is returned should have the identical bit
+ *   representation as the single-precision floating-point number 2.0^x.
+ *   If the result is too small to be represented as a denorm, return
+ *   0. If too large, return +INF.
+ * 
+ *   Legal ops: Any integer/unsigned operations incl. ||, &amp;&amp;. Also if, while 
+ *   Max ops: 30 
+ *   Rating: 4
+ */
+unsigned floatPower2(int x) {
+    if (x &gt; 127) {
+      return 0xff &lt;&lt;23; 
+    } else if (x &lt;= -149) {
+      return 0;
+    } else if (x &gt;= -126) {
+      return (x + 127) &lt;&lt; 23;
+    } else {
+      return ((0x1 &lt;&lt; 23) &gt;&gt; (-x - 126)) | (1 &lt;&lt; 23);
+    }
+}
+</code></pre>
+<p>思路<br>
+首先明确一下浮点数的表示范围：</p>
+<ul>
+<li>规格化 ：2<sup>-126</sup> ~ 2<sup>127</sup></li>
+<li>非规格化 ：2<sup>-149</sup> ~2<sup>126</sup></li>
+</ul>
+<p>所以整体能表示的范围是：2<sup>-149</sup> ~ 2<sup>127</sup><br>
+2<sup>-149</sup> ~  2<sup>-125</sup> 用 非规格化表示，2<sup>-126</sup> ~  2<sup>-127</sup>  用 规格化表示</p>
+<h1 id="2总结">2.总结</h1>
+<p>这个实验对理解位运算、以及浮点数的表示非常有启发性</p>
+<h1 id="3参考">3.参考</h1>
+<p><a href="https://www.cnblogs.com/JayL-zxl/p/14299969.html">周小伦</a>(另外截取了两张图）<br>
+<a href="https://wdxtub.com/csapp/thick-csapp-lab-1/2016/04/16/">小土刀</a></p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://breakspears.github.io/tag/hFBBfxJcv/" class="tag">
+                    csapp
+                  </a>
+                
+              </div>
+            
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>
